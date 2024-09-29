@@ -5,7 +5,7 @@ type condition = Cnz | Cz | Cnc | Cc | Cnotnz | Cnotz | Cnotnc | Cnotc
 
 (* Instruction type *)
 type instruction =
-(*             mnemonic 1st arg  2nd arg  size*)
+(*             mnemonic 1st arg  2nd arg  size *)
   | Binary  of string * string * string * int
   | Unary   of string * string * int
   | Nullary of string * int
@@ -35,7 +35,7 @@ let str_of_cond = function
   | Cnotnz -> "!NZ"
   | Cnotz  -> "!Z"
   | Cnotnc -> "!NC"
-  | CnotC  -> "!C"
+  | Cnotc  -> "!C"
 
 let str_of_flag = function
   | Fz -> "z"
@@ -49,20 +49,22 @@ let make_ptr = fun str -> "[" ^ str ^ "]"
 let make_inc = fun str -> str ^ "+"
 let make_dec = fun str -> str ^ "-"
 
-let strptr_of_r8 = fun r -> r8 |> str_of_r8 |> make_ptr
-let strptr_of_r16 = fun r -> f16 |> str_of_16 |> make_ptr
+let strptr_of_r8 = fun r -> r |> str_of_r8 |> make_ptr
+let strptr_of_r16 = fun r -> r |> str_of_r16 |> make_ptr
 
-let strptrdec_of_r8 = fun r -> r8 |> str_of_r8 |> make_dec |> make_ptr
-let strptrdec_of_r16 = fun r -> f16 |> str_of_16 |> make_dec |> make_ptr
+let strptrdec_of_r8 = fun r -> r |> str_of_r8 |> make_dec |> make_ptr
+let strptrdec_of_r16 = fun r -> r |> str_of_r16 |> make_dec |> make_ptr
 
-let strptrinc_of_r8 = fun r -> r8 |> str_of_r8 |> make_inc |> make_ptr
-let strptrinc_of_r16 = fun r -> f16 |> str_of_16 |> make_inc |> make_ptr
+let strptrinc_of_r8 = fun r -> r |> str_of_r8 |> make_inc |> make_ptr
+let strptrinc_of_r16 = fun r -> r |> str_of_r16 |> make_inc |> make_ptr
 
 let strptr_of_int = fun n -> n |> str_of_int |> make_ptr
 
 let str_A = str_of_r8 A
 let str_C = str_of_r8 C
 let str_HL = str_of_r16 HL
+let str_SP = str_of_r16 SP
+let str_AF = str_of_r16 AF
 
 
 (** All operations as values of the algebraic type operation **)
@@ -177,7 +179,7 @@ let iLD_SPHL   =          Binary ("LD", str_SP, str_HL, 1)
 let iPOP_AF    =          Unary ("POP", str_AF, 1)
 let iPOP_r16   = fun r -> Unary ("POP", str_of_r16 r, 1)
 let iPUSH_AF   =          Unary ("PUSH", str_AF, 1)
-let iPUSH_r16  =          Unary ("PUSH", str_of_r16 r, 1)
+let iPUSH_r16  = fun r -> Unary ("PUSH", str_of_r16 r, 1)
 
 (* Miscellaneous Instructions *)
 let iCCF  = Nullary ("CCF", 1)
