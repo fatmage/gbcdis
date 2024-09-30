@@ -1,7 +1,7 @@
 open Instruction
 
-(*           label    position *)
-type label = string * int 
+(*        position  label *)
+type label = int * string
 
 let read_byte ch = 
   match In_channel.input_byte ch with 
@@ -546,7 +546,25 @@ let make_labels = fun instructions ->
   let rec label_aux = fun is acc pos ->
     match is with 
     | []      -> List.rev acc
-    | i :: is -> label_aux is (i :: acc) pos
+    | i :: is -> 
       (* do matching on mnemonic -> add a label if necessary *)
+      begin match i with
+      | Binary (mnemonic, arg1, arg2, length) -> 
+        begin match mnemonic with
+        | "JP" -> label_aux is (Printf.sprintf "Address_%s" arg2 :: acc) (pos + length)
+        (* | "JR" -> need to compute the absolute address *)
+        | "CALL" -> label_aux is (Printf.sprintf "Address_%s" arg2 :: acc) (pos + length)
+        | _ -> label_aux is acc (pos + length)
+        end
+      | Unary (mnemonic, arg, length) -> 
+        begin match mnemonic with
+        | "JP" -> label_aux is (Printf.sprintf "Address_%s" arg :: acc) (pos + length)
+        (* | "JR" -> need to compute the absolute address *)
+        | "CALL" -> label_aux is (Printf.sprintf "Address_%s" arg :: acc) (pos + length)
+        | _ -> label_aux is acc (pos + length)
+        end
+      | Nullary (mnemonic, length) -> label_aux is acc (pos + length)
+      end
+      
   in
   label_aux instructions [] 0
