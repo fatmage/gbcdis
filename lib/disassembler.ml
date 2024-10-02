@@ -542,26 +542,36 @@ let decode_file = fun file_ch ->
       in decode_aux (next_instruction :: acc)
     in decode_aux []
 
+let label_comp : label -> label -> int = fun l1 l2 ->
+  let first_comparision = compare (fst l1) (fst l2) in
+  match first_comparision with 
+  | 0 -> compare (snd l1) (snd l2)
+  | n -> n
+
 let make_labels = fun instructions ->
   let rec label_aux = fun is acc pos ->
     match is with 
-    | []      -> List.rev acc
+    | []      -> List.sort_uniq label_comp acc
     | i :: is -> 
       (* do matching on mnemonic -> add a label if necessary *)
       begin match i with
       | Binary (mnemonic, arg1, arg2, length) -> 
+        let next_pos = pos + length in
         begin match mnemonic with
-        | "JP" -> label_aux is (Printf.sprintf "Address_%s" arg2 :: acc) (pos + length)
-        (* | "JR" -> need to compute the absolute address *)
-        | "CALL" -> label_aux is (Printf.sprintf "Address_%s" arg2 :: acc) (pos + length)
-        | _ -> label_aux is acc (pos + length)
+        | "JP" -> label_aux is ((int_of_string arg2, Printf.sprintf "Address_%s" arg2) :: acc) next_pos
+        | "JR" -> let abs_address = pos + (int_of_string arg2) in 
+                  label_aux is ((abs_address, Printf.sprintf "Address_0x%X" abs_address) :: acc) next_pos
+        | "CALL" -> label_aux is ((int_of_string arg2, Printf.sprintf "Address_%s" arg2) :: acc) next_pos
+        | _ -> label_aux is acc next_pos
         end
       | Unary (mnemonic, arg, length) -> 
+        let next_pos = pos + length in
         begin match mnemonic with
-        | "JP" -> label_aux is (Printf.sprintf "Address_%s" arg :: acc) (pos + length)
-        (* | "JR" -> need to compute the absolute address *)
-        | "CALL" -> label_aux is (Printf.sprintf "Address_%s" arg :: acc) (pos + length)
-        | _ -> label_aux is acc (pos + length)
+        | "JP" -> label_aux is ((int_of_string arg, Printf.sprintf "Address_%s" arg) :: acc) next_pos
+        | "JR" -> let abs_address = pos + (int_of_string arg) in 
+                  label_aux is ((int_of_string arg, Printf.sprintf "Address_0x%X" abs_address) :: acc) next_pos
+        | "CALL" -> label_aux is ((int_of_string arg, Printf.sprintf "Address_%s" arg) :: acc) next_pos
+        | _ -> label_aux is acc next_pos
         end
       | Nullary (mnemonic, length) -> label_aux is acc (pos + length)
       end
