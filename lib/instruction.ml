@@ -43,9 +43,9 @@ let str_of_flag = function
   | Fh -> "h"
   | Fc -> "c"
 
-let str_of_int = Printf.sprintf "0x%X"
+let str_of_int = Printf.sprintf "0x%04X"
 
-let make_ptr = fun str -> "[" ^ str ^ "]"
+let make_ptr = fun str -> "(" ^ str ^ ")"
 let make_inc = fun str -> str ^ "+"
 let make_dec = fun str -> str ^ "-"
 
@@ -160,8 +160,8 @@ let iCALL_cn16 = fun c n -> Binary ("CALL", str_of_cond c, str_of_int n, 3)
 let iJP_HL     =            Unary ("JP", str_HL, 1)
 let iJP_n16    = fun n ->   Unary ("JP", str_of_int n, 3)
 let iJP_cn16   = fun c n -> Binary ("JP", str_of_cond c, str_of_int n, 3)
-let iJR_n16    = fun n ->   Unary ("JR", str_of_int n, 2)
-let iJR_cn16   = fun c n -> Binary ("JR", str_of_cond c, str_of_int n, 2)
+let iJR_n8    = fun n ->    Unary ("JR", str_of_int n, 2)
+let iJR_cn8   = fun c n ->  Binary ("JR", str_of_cond c, str_of_int n, 2)
 let iRET_c     = fun c ->   Unary ("RET", str_of_cond c, 1)
 let iRET       =            Nullary ("RET", 1)
 let iRETI      =            Nullary ("RETI", 1)
@@ -190,4 +190,4 @@ let iEI   = Nullary ("EI", 1)
 let iHALT = Nullary ("HALT", 1)
 let iNOP  = Nullary ("NOP", 1)
 let iSCF  = Nullary ("SCF", 1)
-let iSTOP = fun n -> Unary ("STOP", str_of_int n,2)
+let iSTOP = fun n -> Unary ("STOP", str_of_int n, 2)
