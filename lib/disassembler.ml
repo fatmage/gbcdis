@@ -4,18 +4,18 @@ open Instruction
 (*        position  label *)
 type label = int * string
 
-let read_byte ch = 
-  match In_channel.input_byte ch with 
+let read_byte ch =
+  match In_channel.input_byte ch with
   | None -> failwith "No more bytes to read."
   | Some byte -> byte
 
-let read_2bytes ch = 
-  let second  = read_byte ch in 
-  let first = read_byte ch in 
+let read_2bytes ch =
+  let second  = read_byte ch in
+  let first = read_byte ch in
   first * 256 + second
 
 let match_prefixed file_ch =
-  match read_byte file_ch with 
+  match read_byte file_ch with
   | 0x00 -> iRLC_r8 B
   | 0x01 -> iRLC_r8 C
   | 0x02 -> iRLC_r8 D
@@ -276,33 +276,33 @@ let match_prefixed file_ch =
 
 let decode_file = fun file_ch ->
   let rec decode_aux = fun acc ->
-    match In_channel.input_byte file_ch with 
+    match In_channel.input_byte file_ch with
     | None      -> List.rev acc
-    | Some byte -> 
+    | Some byte ->
       let next_instruction =
-        match byte with 
+        match byte with
         | 0x00 -> iNOP
         | 0x01 -> let n16 = read_2bytes file_ch in iLD_rn16 BC n16
         | 0x02 -> iLD_r16pA BC
-        | 0x03 -> iINC_r16 BC 
-        | 0x04 -> iINC_r8 B 
-        | 0x05 -> iDEC_r8 B 
-        | 0x06 -> let n8 = read_byte file_ch in iLD_rn8 B n8 
-        | 0x07 -> iRLCA 
-        | 0x08 -> let n16 = read_2bytes file_ch in iLD_n16pSP n16 
-        | 0x09 -> iADD_HLr16 BC 
-        | 0x0A -> iLD_Ar16p BC 
-        | 0x0B -> iDEC_r16 BC 
-        | 0x0C -> iINC_r8 C 
-        | 0x0D -> iDEC_r8 C 
-        | 0x0E -> let n8 = read_byte file_ch in iLD_rn8 C n8 
-        | 0x0F -> iRRCA 
-        | 0x10 -> let n8 = read_byte file_ch in iSTOP n8 
-        | 0x11 -> let n16 = read_2bytes file_ch in iLD_rn16 DE n16 
-        | 0x12 -> iLD_r16pA DE 
-        | 0x13 -> iINC_r16 DE 
-        | 0x14 -> iINC_r8 D 
-        | 0x15 -> iDEC_r8 D 
+        | 0x03 -> iINC_r16 BC
+        | 0x04 -> iINC_r8 B
+        | 0x05 -> iDEC_r8 B
+        | 0x06 -> let n8 = read_byte file_ch in iLD_rn8 B n8
+        | 0x07 -> iRLCA
+        | 0x08 -> let n16 = read_2bytes file_ch in iLD_n16pSP n16
+        | 0x09 -> iADD_HLr16 BC
+        | 0x0A -> iLD_Ar16p BC
+        | 0x0B -> iDEC_r16 BC
+        | 0x0C -> iINC_r8 C
+        | 0x0D -> iDEC_r8 C
+        | 0x0E -> let n8 = read_byte file_ch in iLD_rn8 C n8
+        | 0x0F -> iRRCA
+        | 0x10 -> let n8 = read_byte file_ch in iSTOP n8
+        | 0x11 -> let n16 = read_2bytes file_ch in iLD_rn16 DE n16
+        | 0x12 -> iLD_r16pA DE
+        | 0x13 -> iINC_r16 DE
+        | 0x14 -> iINC_r8 D
+        | 0x15 -> iDEC_r8 D
         | 0x16 -> let n8 = read_byte file_ch in iLD_rn8 D n8
         | 0x17 -> iRLA
         | 0x18 -> let n8 = read_byte file_ch in iJR_n8 n8
@@ -319,10 +319,10 @@ let decode_file = fun file_ch ->
         | 0x23 -> iINC_r16 HL
         | 0x24 -> iINC_r8 H
         | 0x25 -> iDEC_r8 H
-        | 0x26 -> let n8 = read_byte file_ch in iLD_rn8 H n8 
+        | 0x26 -> let n8 = read_byte file_ch in iLD_rn8 H n8
         | 0x27 -> iDAA
         | 0x28 -> let n8 = read_byte file_ch in iJR_cn8 Cz n8
-        | 0x29 -> iADD_HLr16 HL 
+        | 0x29 -> iADD_HLr16 HL
         | 0x2A -> iLD_AHLIp
         | 0x2B -> iDEC_r16 HL
         | 0x2C -> iINC_r8 L
@@ -400,10 +400,10 @@ let decode_file = fun file_ch ->
         | 0x74 -> iLD_HLpr8 H
         | 0x75 -> iLD_HLpr8 L
         | 0x76 -> iHALT
-        | 0x77 -> iLD_HLpr8 A 
-        | 0x78 -> iLD_rr8 A B 
-        | 0x79 -> iLD_rr8 A C 
-        | 0x7A -> iLD_rr8 A D 
+        | 0x77 -> iLD_HLpr8 A
+        | 0x78 -> iLD_rr8 A B
+        | 0x79 -> iLD_rr8 A C
+        | 0x7A -> iLD_rr8 A D
         | 0x7B -> iLD_rr8 A E
         | 0x7C -> iLD_rr8 A H
         | 0x7D -> iLD_rr8 A L
@@ -426,7 +426,7 @@ let decode_file = fun file_ch ->
         | 0x8E -> iADC_AHLp
         | 0x8F -> iADC_Ar8 A
         | 0x90 -> iSUB_Ar8 B
-        | 0x91 -> iSUB_Ar8 C 
+        | 0x91 -> iSUB_Ar8 C
         | 0x92 -> iSUB_Ar8 D
         | 0x93 -> iSUB_Ar8 E
         | 0x94 -> iSUB_Ar8 H
@@ -467,7 +467,7 @@ let decode_file = fun file_ch ->
         | 0xB7 -> iOR_Ar8 A
         | 0xB8 -> iCP_Ar8 B
         | 0xB9 -> iCP_Ar8 C
-        | 0xBA -> iCP_Ar8 D 
+        | 0xBA -> iCP_Ar8 D
         | 0xBB -> iCP_Ar8 E
         | 0xBC -> iCP_Ar8 H
         | 0xBD -> iCP_Ar8 L
@@ -475,7 +475,7 @@ let decode_file = fun file_ch ->
         | 0xBF -> iCP_Ar8 A
         | 0xC0 -> iRET_c Cnz
         | 0xC1 -> iPOP_r16 BC
-        | 0xC2 -> let n16 = read_2bytes file_ch in iJP_cn16 Cnz n16 
+        | 0xC2 -> let n16 = read_2bytes file_ch in iJP_cn16 Cnz n16
         | 0xC3 -> let n16 = read_2bytes file_ch in iJP_n16 n16
         | 0xC4 -> let n16 = read_2bytes file_ch in iCALL_cn16 Cnz n16
         | 0xC5 -> iPUSH_r16 BC
@@ -485,7 +485,7 @@ let decode_file = fun file_ch ->
         | 0xC9 -> iRET
         | 0xCA -> let n16 = read_2bytes file_ch in iJP_cn16 Cz n16
         (* | 0xCB ->  prefix CB *)
-        | 0xCC -> let n16 = read_2bytes file_ch in iCALL_cn16 Cz n16 
+        | 0xCC -> let n16 = read_2bytes file_ch in iCALL_cn16 Cz n16
         | 0xCD -> let n16 = read_2bytes file_ch in iCALL_n16 n16
         | 0xCE -> let n8 = read_byte file_ch in iADC_An8 n8
         | 0xCF -> iRST_vec 0x08
@@ -539,13 +539,13 @@ let decode_file = fun file_ch ->
         | 0xFF -> iRST_vec 0x38
         (* CB-prefixed *)
         | 0xCB -> match_prefixed file_ch
-        | _    -> iNOP 
+        | _    -> iNOP
       in decode_aux (next_instruction :: acc)
     in decode_aux []
 
 let label_comp : label -> label -> int = fun l1 l2 ->
   let first_comparision = compare (fst l1) (fst l2) in
-  match first_comparision with 
+  match first_comparision with
   | 0 -> compare (snd l1) (snd l2)
   | n -> n
 
@@ -554,43 +554,50 @@ let int8_of_int = fun i ->
   let sign = Int.shift_right (Int.logand i 0x80) 7 in
   ((-128) * sign) + value
 
+
+
 let make_labels = fun instructions ->
   let rec label_aux = fun is acc pos ->
-    match is with 
+    match is with
     | []      -> List.sort_uniq label_comp acc
-    | i :: is -> 
+    | i :: is ->
       (* do matching on mnemonic -> add a label if necessary *)
       begin match i with
-      | Binary (mnemonic, arg1, arg2, length) -> 
+      | Binary (mnemonic, arg1, arg2, length) ->
         let next_pos = pos + length in
-        begin match mnemonic with
-        | "JP" -> 
-          label_aux is ((int_of_string arg2, Printf.sprintf "Address_%s:" arg2) :: acc) next_pos
-        | "JR" -> 
-          let abs_address = pos + 2 + (arg2 |> int_of_string |> int8_of_int) in 
+        let target = int_of_string_opt arg2 in
+        begin match mnemonic, target with
+        | "JP", Some addr ->
+          label_aux is ((addr, Printf.sprintf "Address_%s:" arg2) :: acc) next_pos
+        | "JR", Some addr ->
+          let abs_address = pos + 2 + (addr |> int8_of_int) in
           label_aux is ((abs_address, Printf.sprintf "Address_0x%04X:" abs_address) :: acc) next_pos
-        | "CALL" -> label_aux is ((int_of_string arg2, Printf.sprintf "Address_%s:" arg2) :: acc) next_pos
+        | "CALL", Some addr ->
+          label_aux is ((addr, Printf.sprintf "Address_%s:" arg2) :: acc) next_pos
         | _ -> label_aux is acc next_pos
         end
-      | Unary (mnemonic, arg, length) -> 
+      | Unary (mnemonic, arg, length) ->
         let next_pos = pos + length in
-        begin match mnemonic with
-        | "JP" -> 
-          label_aux is ((int_of_string arg, Printf.sprintf "Address_%s:" arg) :: acc) next_pos
-        | "JR" -> 
-          let abs_address = pos + 2 + (arg |> int_of_string |> int8_of_int) in 
+        let target = int_of_string_opt arg in
+        begin match mnemonic, target with
+        | "JP", Some addr ->
+          label_aux is ((addr, Printf.sprintf "Address_%s:" arg) :: acc) next_pos
+        | "JR", Some addr ->
+          let abs_address = pos + 2 + (addr |> int8_of_int) in
           label_aux is ((abs_address, Printf.sprintf "Address_0x%04X:" abs_address) :: acc) next_pos
-        | "CALL" -> 
-          label_aux is ((int_of_string arg, Printf.sprintf "Address_%s:" arg) :: acc) next_pos
+        | "CALL", Some addr ->
+          label_aux is ((addr, Printf.sprintf "Address_%s:" arg) :: acc) next_pos
         | _ -> label_aux is acc next_pos
         end
       | Nullary (mnemonic, length) -> label_aux is acc (pos + length)
       end
-      
+
   in
   label_aux instructions [] 0
 
 let process_file = fun file_ch ->
-  let is = decode_file file_ch in 
+  print_endline "Decoding...";
+  let is = decode_file file_ch in
+  print_endline "Making labels...";
   let ls = make_labels is in
   is, ls
