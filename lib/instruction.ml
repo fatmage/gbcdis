@@ -1,7 +1,10 @@
-type r8 = A | B | C | D | E | H | L 
+(* Registers *)
+type r8 = A | B | C | D | E | H | L
 type r16 = AF | BC | DE | HL | SP | PC
+(* Flags *)
 type flag = Fz | Fn | Fh | Fc
-type condition = Cnz | Cz | Cnc | Cc | Cnotnz | Cnotz | Cnotnc | Cnotc
+(* Conditions for conditional jumps *)
+type condition = Cnz | Cz | Cnc | Cc
 
 (* Instruction type *)
 type instruction =
@@ -27,15 +30,11 @@ let str_of_r16 = function
   | SP -> "SP"
   | PC -> "PC"
 
-let str_of_cond = function 
+let str_of_cond = function
   | Cnz    -> "NZ"
   | Cz     -> "Z"
   | Cnc    -> "NC"
   | Cc     -> "C"
-  | Cnotnz -> "!NZ"
-  | Cnotz  -> "!Z"
-  | Cnotnc -> "!NC"
-  | Cnotc  -> "!C"
 
 let str_of_flag = function
   | Fz -> "z"
@@ -71,26 +70,26 @@ let str_AF = str_of_r16 AF
 
 (* 8-bit Arithmetic and Logic Instructions *)
 let iADC_Ar8  = fun r -> Binary ("ADC", str_A, str_of_r8 r, 1)
-let iADC_AHLp =          Binary ("ADC", str_A, strptr_of_r16 HL, 1) 
+let iADC_AHLp =          Binary ("ADC", str_A, strptr_of_r16 HL, 1)
 let iADC_An8  = fun n -> Binary ("ADC", str_A, str_of_int n, 2)
 let iADD_Ar8  = fun r -> Binary ("ADD", str_A, str_of_r8 r, 1)
-let iADD_AHLp =          Binary ("ADD", str_A, strptr_of_r16 HL, 1) 
+let iADD_AHLp =          Binary ("ADD", str_A, strptr_of_r16 HL, 1)
 let iADD_An8  = fun n -> Binary ("ADD", str_A, str_of_int n, 2)
 let iAND_Ar8  = fun r -> Binary ("AND", str_A, str_of_r8 r, 1)
-let iAND_AHLp =          Binary ("AND", str_A, strptr_of_r16 HL, 1) 
+let iAND_AHLp =          Binary ("AND", str_A, strptr_of_r16 HL, 1)
 let iAND_An8  = fun n -> Binary ("AND", str_A, str_of_int n, 2)
 let iCP_Ar8   = fun r -> Binary ("CP",  str_A, str_of_r8 r, 1)
-let iCP_AHLp  =          Binary ("CP",  str_A, strptr_of_r16 HL, 1) 
+let iCP_AHLp  =          Binary ("CP",  str_A, strptr_of_r16 HL, 1)
 let iCP_An8   = fun n -> Binary ("CP",  str_A, str_of_int n, 2)
 let iDEC_r8   = fun r -> Unary ("DEC", str_of_r8 r, 1)
-let iDEC_HLp  =          Unary ("DEC", strptr_of_r16 HL, 1) 
+let iDEC_HLp  =          Unary ("DEC", strptr_of_r16 HL, 1)
 let iINC_r8  = fun r ->  Unary ("INC", str_of_r8 r, 1)
-let iINC_HLp =           Unary ("INC", strptr_of_r16 HL, 1) 
+let iINC_HLp =           Unary ("INC", strptr_of_r16 HL, 1)
 let iOR_Ar8   = fun r -> Binary ("OR",  str_A, str_of_r8 r, 1)
 let iOR_AHLp  =          Binary ("OR",  str_A, strptr_of_r16 HL, 1)
 let iOR_An8   = fun n -> Binary ("OR",  str_A, str_of_int n, 2)
 let iSBC_Ar8  = fun r -> Binary ("SBC", str_A, str_of_r8 r, 1)
-let iSBC_AHLp =          Binary ("SBC", str_A, strptr_of_r16 HL, 1) 
+let iSBC_AHLp =          Binary ("SBC", str_A, strptr_of_r16 HL, 1)
 let iSBC_An8  = fun n -> Binary ("SBC", str_A, str_of_int n, 2)
 let iSUB_Ar8  = fun r -> Binary ("SUB", str_A, str_of_r8 r, 1)
 let iSUB_AHLp =          Binary ("SUB", str_A, strptr_of_r16 HL, 1)

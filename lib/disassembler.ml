@@ -556,6 +556,8 @@ let int8_of_int = fun i ->
 
 
 
+
+(* TODO: set target of jump to the created label *)
 let make_labels = fun instructions ->
   let rec label_aux = fun is acc pos ->
     match is with
